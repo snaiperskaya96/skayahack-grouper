@@ -367,7 +367,9 @@ EXPORT_SYMBOL(unregister_reboot_notifier);
  */
 void kernel_restart(char *cmd)
 {
+#ifdef CONFIG_ARCH_TEGRA
 	disable_auto_hotplug();
+#endif
 	kernel_restart_prepare(cmd);
 	if (!cmd)
 		printk(KERN_EMERG "Restarting system.\n");
@@ -411,14 +413,15 @@ EXPORT_SYMBOL_GPL(kernel_halt);
 extern unsigned battery_cable_status;
 void kernel_power_off(void)
 {
+#ifdef CONFIG_ARCH_TEGRA
 	 if ((battery_cable_status)||(!gpio_get_value(TEGRA_GPIO_PV1))) {
 		char cmd[] = "chrager-mode";
 
 		printk(KERN_EMERG "kernel_power_off: go to charger mode!");
 		kernel_restart(cmd);
 	 }
-
 	disable_auto_hotplug();
+#endif
 	kernel_shutdown_prepare(SYSTEM_POWER_OFF);
 	if (pm_power_off_prepare)
 		pm_power_off_prepare();
